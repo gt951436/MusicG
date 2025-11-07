@@ -4,7 +4,8 @@ import pandas as pd
 
 
 DATASET_PATH = "genres_original"
-JSON_PATH = "data.json"
+
+CSV_PATH = "features.csv"
 
 SAMPLE_RATE = 22050
 TRACK_DURATION = 30 #SECONDS
@@ -18,7 +19,7 @@ HOP_LENGTH = 512
 SAMPLES_PER_TRACK = SAMPLE_RATE*TRACK_DURATION
 
 
-def process_dataset(dataset_path,json_path):
+def process_dataset(dataset_path,csv_path):
     
     data = {
         "mapping":[], # genre names list
@@ -76,10 +77,10 @@ def process_dataset(dataset_path,json_path):
     print("\nConverting data to pandas DataFrame...")
     features_df = pd.DataFrame(data["features"])
     features_df["genre_label"] = data["labels"]
-    print("DataFrame created successfully. Here are the first 5 rows:")
-    print(features_df.head())
     
-    print("Feature extraction done.")
+    print(f"Saving Dataframes to {csv_path}...")
+    features_df.to_csv(csv_path,index=False)
+    print("\nFeature extraction done. The file 'features.csv' has been created.")
     
 if __name__ =="__main__":
-    process_dataset(DATASET_PATH,JSON_PATH)
+    process_dataset(DATASET_PATH,CSV_PATH)
