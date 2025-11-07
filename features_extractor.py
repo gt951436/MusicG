@@ -2,6 +2,8 @@ import os, json, librosa
 import numpy as np
 import pandas as pd
 
+import soundfile as sf
+
 DATASET_PATH = "genres_original"
 
 CSV_PATH = "features.csv"
@@ -40,7 +42,6 @@ def process_dataset(dataset_path,csv_path):
                     
                     try:
                         # in case .wav file is corrupted
-                        import soundfile as sf
                         info = sf.info(file_path)
                         if info.frames==0:
                             raise ValueError("Empty audio file")

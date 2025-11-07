@@ -73,3 +73,6 @@ spectrograms/
 # ==========================
 *.pt
 *.pth
+
+# zip file ko commit mat kar bhai!
+archive.zip
