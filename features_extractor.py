@@ -2,7 +2,6 @@ import os, json, librosa
 import numpy as np
 import pandas as pd
 
-
 DATASET_PATH = "genres_original"
 
 CSV_PATH = "features.csv"
@@ -40,7 +39,14 @@ def process_dataset(dataset_path,csv_path):
                     file_path = os.path.join(genre_path,filename)
                     
                     try:
+                        # in case .wav file is corrupted
+                        import soundfile as sf
+                        info = sf.info(file_path)
+                        if info.frames==0:
+                            raise ValueError("Empty audio file")
+                        
                         signal,sr = librosa.load(file_path,sr=SAMPLE_RATE)
+                        
                         #signal segmentation
                         if len(signal)>=SAMPLES_PER_TRACK:
                             samples_per_segment = int(SAMPLES_PER_TRACK/NUM_SEGMENTS)
@@ -71,7 +77,7 @@ def process_dataset(dataset_path,csv_path):
                                 data["labels"].append(i)
                                          
                     except Exception as e:
-                        print(f"Error loading files {file_path}: {e}")
+                        print(f"⚠️ Skipping file {file_path} due to error: {e}")
                         continue
     
     print("\nConverting data to pandas DataFrame...")
