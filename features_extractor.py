@@ -1,5 +1,7 @@
 import os, json, librosa
 import numpy as np
+import pandas as pd
+
 
 DATASET_PATH = "genres_original"
 JSON_PATH = "data.json"
@@ -70,6 +72,12 @@ def process_dataset(dataset_path,json_path):
                     except Exception as e:
                         print(f"Error loading files {file_path}: {e}")
                         continue
+    
+    print("\nConverting data to pandas DataFrame...")
+    features_df = pd.DataFrame(data["features"])
+    features_df["genre_label"] = data["labels"]
+    print("DataFrame created successfully. Here are the first 5 rows:")
+    print(features_df.head())
     
     print("Feature extraction done.")
     
