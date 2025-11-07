@@ -1,0 +1,75 @@
+# ===============================
+# Python cache & temporary files
+# ===============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =====================================
+# Virtual environment / package folders
+# =====================================
+venv/
+env/
+.venv/
+ENV/
+*.egg-info/
+build/
+dist/
+
+# ==================
+# OS / IDE metadata
+# ==================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# =======================
+# TensorFlow / Keras data
+# =======================
+checkpoints/
+saved_models/
+*.h5
+*.hdf5
+*.ckpt
+*.pb
+
+# =====================
+# Logs & tensorboard
+# =====================
+logs/
+events.out.tfevents.*
+*.log
+
+# =========================
+# Audio & Spectrogram files
+# =========================
+data/
+dataset/
+spectrograms/
+*.wav
+*.mp3
+*.flac
+*.npy
+*.npz
+*.png
+
+# =====================
+# Notebooks checkpoints
+# =====================
+.ipynb_checkpoints/
+
+# ==========================
+# System-specific temporary
+# ==========================
+*.tmp
+*.bak
+*.backup
+*.old
+
+# ==========================
+# PyTorch (if added later)
+# ==========================
+*.pt
+*.pth
