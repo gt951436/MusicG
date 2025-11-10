@@ -38,6 +38,34 @@ try:
    
    plt.tight_layout()
    plt.show()
+   
+   print("\n--- Generating Box Plot for Spectral Centroid ---")
+   
+   plt.figure(figsize=(14,7))
+   box_ax = sns.boxplot(x='genre_label',y='25',data=df,palette='cubehelix')
+   
+   box_ax.set_title('Spectral Centroid Distribution Across Genres', fontsize=18)
+   box_ax.set_xlabel('Genre', fontsize=14)
+   box_ax.set_ylabel('Spectral Centroid', fontsize=14)
+   
+   box_ax.set_xticklabels(genre_names, rotation=30, ha="right") # 'ha' aligns the labels better
+
+   plt.tight_layout()
+   plt.show()
+   
+   print("\n--- Generating Violin Plot for First MFCC (Column 0) ---")
+   
+   plt.figure(figsize=(14, 7))
+   violin_ax = sns.violinplot(x='genre_label', y='0', data=df, palette='Spectral')
+   
+   violin_ax.set_title('First MFCC (Timbre/Energy) Distribution Across Genres', fontsize=18)
+   violin_ax.set_xlabel('Genre', fontsize=14)
+   violin_ax.set_ylabel('MFCC 1 Value', fontsize=14)
+   
+   violin_ax.set_xticklabels(genre_names, rotation=30, ha="right")
+
+   plt.tight_layout()
+   plt.show()
        
 except FileNotFoundError:
     print(f"Error:The file at '{CSV_PATH}' was not found.")
