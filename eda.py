@@ -66,6 +66,22 @@ try:
 
    plt.tight_layout()
    plt.show()
+   
+   #correlation matrix
+   print("\\n--- Computing Correlation Matrix ---")
+   
+   correlation_mat = df.corr()
+   print("Correlation matrix computed successfully.")
+   print("Top 5 rows of the correlation matrix:")
+   print(correlation_mat.head())
+   
+   #visualizing correlation matrix as heatmap
+   print("\n--- Generating Heatmap of Feature Correlations ---")
+   plt.figure(figsize=(18,15))
+   sns.heatmap(correlation_mat, cmap='coolwarm', annot=False)
+   plt.title('Correlation Matrix of Music Features', fontsize=20)
+   plt.tight_layout()
+   plt.show()
        
 except FileNotFoundError:
     print(f"Error:The file at '{CSV_PATH}' was not found.")
