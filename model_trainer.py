@@ -9,6 +9,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.metrics import accuracy_score
+import joblib
 
 CSV_PATH = "features.csv"
 
@@ -66,7 +67,7 @@ try:
     #print(f"Standard deviation of first 5 features in X_train_scaled: {X_train_scaled[:, :5].std(axis=0)}")
     #print(f"\nMean of first 5 features in X_test_scaled: {X_test_scaled[:, :5].mean(axis=0)}")
     
-    #------TRAINING MODELS-----------------------------------------------------------------
+    #-----TRAINING MODELS----------------------------------------------
     print("\n--- Training LR Model ---")
     log_reg = LogisticRegression(max_iter=1000)
     log_reg.fit(X_train_scaled,y_train)
@@ -98,7 +99,22 @@ try:
     # RF classifier
     accuracy_rf = rf_model.score(X_test_scaled, y_test)
     print(f"RFC Accuracy: {accuracy_rf * 100:.2f}%")
-    #---------------------------------------------------------------------------------------
+    
+    #-------SAVING TRAINED MODELS & SCALER--------------------------
+    print("\n--- Saving Models and Scaler to Disk ---")
+    joblib.dump(scaler, "scaler.joblib")
+    joblib.dump(log_reg, "logistic_regression_model.joblib")
+    joblib.dump(svm_model, "svm_model.joblib")
+    joblib.dump(rf_model, "random_forest_model.joblib")
+    
+    print("Scaler and models have been successfully saved to disk.")
+    print("The following files have been created in your project directory:")
+    print("- scaler.joblib")
+    print("- logistic_regression_model.joblib")
+    print("- svm_model.joblib")
+    print("- random_forest_model.joblib")
+    
+    #-----------------------------------------------
     
 except FileNotFoundError:
     print(f"Error: The file at '{CSV_PATH}' was not found.")
