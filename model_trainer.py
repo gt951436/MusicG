@@ -67,7 +67,7 @@ try:
     log_reg = LogisticRegression(max_iter=1000)
     log_reg.fit(X_train_scaled,y_train)
     print("Logistic Regression model trained successfully.")
-    #print(f"Model learned the following classes: {log_reg.classes_}")
+    print(f"Model learned the following classes: {log_reg.classes_}")
     
     print("\n--- Training Support Vector Machine (SVM) Model ---")
     svm_model = SVC(kernel='rbf',C=1.0,random_state=42,probability=True)
