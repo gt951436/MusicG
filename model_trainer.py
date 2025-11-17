@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 
 CSV_PATH = "features.csv"
 
@@ -66,8 +67,13 @@ try:
     log_reg = LogisticRegression(max_iter=1000)
     log_reg.fit(X_train_scaled,y_train)
     print("Logistic Regression model trained successfully.")
-    print(f"Model learned the following classes: {log_reg.classes_}")
+    #print(f"Model learned the following classes: {log_reg.classes_}")
     
+    print("\n--- Training Support Vector Machine (SVM) Model ---")
+    svm_model = SVC(kernel='rbf',C=1.0,random_state=42,probability=True)
+    svm_model.fit(X_train_scaled,y_train)
+    print("Support Vector Machine model trained successfully!")
+    print(f"Model learned the following classes: {svm_model.classes_}")
     
 except FileNotFoundError:
     print(f"Error: The file at '{CSV_PATH}' was not found.")
