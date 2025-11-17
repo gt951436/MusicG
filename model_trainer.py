@@ -6,6 +6,7 @@ from sklearn.preprocessing import StandardScaler
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 
 CSV_PATH = "features.csv"
 
@@ -63,17 +64,23 @@ try:
     #print(f"Standard deviation of first 5 features in X_train_scaled: {X_train_scaled[:, :5].std(axis=0)}")
     #print(f"\nMean of first 5 features in X_test_scaled: {X_test_scaled[:, :5].mean(axis=0)}")
     
-    print("\n--- Training Logistic Regression Model ---")
+    print("\n--- Training LR Model ---")
     log_reg = LogisticRegression(max_iter=1000)
     log_reg.fit(X_train_scaled,y_train)
     print("Logistic Regression model trained successfully.")
     print(f"Model learned the following classes: {log_reg.classes_}")
     
-    print("\n--- Training Support Vector Machine (SVM) Model ---")
+    print("\n--- Training SVM Model ---")
     svm_model = SVC(kernel='rbf',C=1.0,random_state=42,probability=True)
     svm_model.fit(X_train_scaled,y_train)
     print("Support Vector Machine model trained successfully!")
     print(f"Model learned the following classes: {svm_model.classes_}")
+    
+    print("\n--- Training Random Forest Classifier Model ---")
+    rf_model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
+    rf_model.fit(X_train_scaled,y_train)
+    print("Random Forest Classifier model trained successfully!")
+    print(f"Model learned the following classes: {rf_model.classes_}")
     
 except FileNotFoundError:
     print(f"Error: The file at '{CSV_PATH}' was not found.")
