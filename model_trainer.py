@@ -8,6 +8,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 
+from sklearn.metrics import accuracy_score
+
 CSV_PATH = "features.csv"
 
 try:
@@ -64,6 +66,7 @@ try:
     #print(f"Standard deviation of first 5 features in X_train_scaled: {X_train_scaled[:, :5].std(axis=0)}")
     #print(f"\nMean of first 5 features in X_test_scaled: {X_test_scaled[:, :5].mean(axis=0)}")
     
+    #------TRAINING MODELS-----------------------------------------------------------------
     print("\n--- Training LR Model ---")
     log_reg = LogisticRegression(max_iter=1000)
     log_reg.fit(X_train_scaled,y_train)
@@ -81,6 +84,21 @@ try:
     rf_model.fit(X_train_scaled,y_train)
     print("Random Forest Classifier model trained successfully!")
     print(f"Model learned the following classes: {rf_model.classes_}")
+    
+    #--------EVALUATING MODELS-------------------------------------------------------------
+    print("\n--- Evaluating Models on the Test Set ---")
+    # LR
+    y_pred_log_reg = log_reg.predict(X_test_scaled)
+    accuracy_log_reg = accuracy_score(y_test,y_pred_log_reg)
+    print(f"LR Accuracy: {accuracy_log_reg*100:.2f}%")
+    # SVM 
+    y_pred_svm = svm_model.predict(X_test_scaled)
+    accuracy_svm = accuracy_score(y_test, y_pred_svm)
+    print(f"SVM Accuracy: {accuracy_svm * 100:.2f}%")
+    # RF classifier
+    accuracy_rf = rf_model.score(X_test_scaled, y_test)
+    print(f"RFC Accuracy: {accuracy_rf * 100:.2f}%")
+    #---------------------------------------------------------------------------------------
     
 except FileNotFoundError:
     print(f"Error: The file at '{CSV_PATH}' was not found.")
