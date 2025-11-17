@@ -108,12 +108,6 @@ try:
     joblib.dump(rf_model, "random_forest_model.joblib")
     
     print("Scaler and models have been successfully saved to disk.")
-    print("The following files have been created in your project directory:")
-    print("- scaler.joblib")
-    print("- logistic_regression_model.joblib")
-    print("- svm_model.joblib")
-    print("- random_forest_model.joblib")
-    
     #-----------------------------------------------
     
 except FileNotFoundError:
