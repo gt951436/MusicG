@@ -54,18 +54,22 @@ print(f"y_test shape: {y_test.shape}")
 model = tf.keras.Sequential()
 print("Sequential model canvas created successfully.")
 
+#-----1st CONV-POOL-BN Layer-----
 # Adding first 1D Convolutional layer
-model.add(Conv1D(
-    filters=32, 
-    kernel_size=3, 
-    activation='relu', 
-    input_shape=(X_train_cnn.shape[1], 1) 
-))
-
+model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(X_train_cnn.shape[1], 1)))
 # Adding a MaxPooling1D layer for down-sampling feature maps
 model.add(MaxPooling1D(pool_size=2))
-
 # Adding Batch Normalization layer for stabilizing and speeding up training
+model.add(BatchNormalization())
+
+#-----2nd CONV-POOL-BN Layer-----
+model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
+model.add(BatchNormalization())
+
+#-----3rd CONV-POOL-BN Layer-----
+model.add(Conv1D(filters=128, kernel_size=3, activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
 model.add(BatchNormalization())
 
 # --- Verification Step: Model Summary ---
