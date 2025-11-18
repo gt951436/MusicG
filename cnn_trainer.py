@@ -98,4 +98,40 @@ print("Model compiled successfully. It's ready to be trained.")
 # --- Verification Step: Model Summary ---
 model.summary()
 
+#----Training the Model-----
+history = model.fit(
+    X_train_cnn, y_train,
+    epochs=50,                    
+    batch_size=32,              
+    validation_split=0.2
+)
+print("\n--- Model Training Complete ---")
+
+#----Plot Training History-----
+import matplotlib.pyplot as plt
+
+# Create a function to plot the training history. This is good practice for reusability.
+def plot_history(history):  
+    fig, axs = plt.subplots(2, 1, figsize=(10, 10))
+
+    # --- Plot Training & Validation Accuracy ---
+    axs[0].plot(history.history["accuracy"], label="Training Accuracy")
+    axs[0].plot(history.history["val_accuracy"], label="Validation Accuracy")
+    axs[0].set_ylabel("Accuracy")
+    axs[0].set_title("Training and Validation Accuracy")
+    axs[0].legend(loc="lower right")
+
+    # --- Plot Training & Validation Loss ---
+    axs[1].plot(history.history["loss"], label="Training Loss")
+    axs[1].plot(history.history["val_loss"], label="Validation Loss")
+    axs[1].set_ylabel("Loss")
+    axs[1].set_xlabel("Epoch")
+    axs[1].set_title("Training and Validation Loss")
+    axs[1].legend(loc="upper right")
+
+    plt.tight_layout()
+    plt.show()
+      
+plot_history(history)
+
 
