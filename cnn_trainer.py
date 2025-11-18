@@ -50,4 +50,18 @@ print(f"X_test_cnn shape: {X_test_cnn.shape}")
 print(f"\ny_train shape: {y_train.shape}")
 print(f"y_test shape: {y_test.shape}")
 
+# Initialize a Sequential model.
+model = tf.keras.Sequential()
+print("Sequential model canvas created successfully.")
+
+# Adding first 1D Convolutional layer
+model.add(Conv1D(
+    filters=32, 
+    kernel_size=3, 
+    activation='relu', 
+    input_shape=(X_train_cnn.shape[1], 1) 
+))
+# --- Verification Step: Model Summary ---
+print("\n--- Model Summary After Adding First Conv1D Layer ---")
+model.summary()
 
