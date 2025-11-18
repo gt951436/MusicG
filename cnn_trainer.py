@@ -134,4 +134,11 @@ def plot_history(history):
       
 plot_history(history)
 
+#----Save the trained Model-----
+print("\n--- Saving the trained CNN model to disk ---")
+
+model.save("music_genre_cnn.h5")
+
+print("\nModel successfully saved as 'music_genre_cnn.h5'.")
+
 
