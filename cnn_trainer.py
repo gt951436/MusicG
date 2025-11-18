@@ -82,6 +82,9 @@ model.add(Dense(units=64, activation='relu'))
 # Add a Dropout layer for regularization for overfitting prevention
 model.add(Dropout(0.3))
 
+#----Output Layer-----
+model.add(Dense(units=10, activation='softmax'))
+
 # --- Verification Step: Model Summary ---
 model.summary()
 
