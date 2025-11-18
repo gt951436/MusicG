@@ -3,6 +3,7 @@ import numpy as np
 import joblib
 import tensorflow as tf 
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 
 print("--- Model Evaluation Script ---")
 
@@ -25,7 +26,6 @@ try:
     print("\n[2/4] Loading scikit-learn models and scaler...")
 
     scaler = joblib.load('scaler.joblib')
-
     log_reg_model = joblib.load('logistic_regression_model.joblib')
     svm_model = joblib.load('svm_model.joblib')
     rf_model = joblib.load('random_forest_model.joblib')
@@ -38,21 +38,17 @@ try:
 
     # --- 3. Load the Keras CNN Model ------------------------
     print("\n[3/4] Loading Keras CNN model...")
-
     cnn_model = tf.keras.models.load_model('music_genre_cnn.h5')
-
     print("Keras CNN model loaded successfully.")
     print(f"CNN Model: {type(cnn_model)}")
     
-    cnn_model.summary()
+    #cnn_model.summary()
 
     # --- 4. Prepare Test Data for Different Model Types ------------
     print("\n[4/4] Preparing test data for model predictions...")
-
     # for scikit-learn models, only scale the data
     X_test_scaled = scaler.transform(X_test)
     print(f"Shape of X_test_scaled (for scikit-learn): {X_test_scaled.shape}")
-
     # for CNN model,scale AND reshape the data to 3D
     X_test_cnn = np.expand_dims(X_test_scaled, axis=-1)
     print(f"Shape of X_test_cnn (for Keras): {X_test_cnn.shape}")
@@ -61,13 +57,11 @@ try:
     
     # --- 5. Generate Predictions for Each Model -----------------------
     print("\n[5/5] Generating predictions on the test set...")
-
     # Predictions for scikit-learn models
     y_pred_log_reg = log_reg_model.predict(X_test_scaled)
     y_pred_svm = svm_model.predict(X_test_scaled)
     y_pred_rf = rf_model.predict(X_test_scaled)
     print("Predictions generated for scikit-learn models.")
-
     # Predictions for Keras CNN model
     y_pred_cnn_probs = cnn_model.predict(X_test_cnn)
     y_pred_cnn = np.argmax(y_pred_cnn_probs, axis=1)
@@ -81,6 +75,29 @@ try:
     print(f"CNN Predictions Shape: {y_pred_cnn.shape}")
 
     print("\nAll predictions have been generated successfully!")
+    
+    # --- 6. Generate Detailed Classification Reports -----------------
+    genre_names = [
+        'blues', 'classical', 'country', 'disco', 'hiphop', 
+        'jazz', 'metal', 'pop', 'reggae', 'rock'
+    ]
+
+    print("\n" + "="*60)
+    print("      Classification Report: Logistic Regression (LR)")
+    print("="*60)
+    print(classification_report(y_test, y_pred_log_reg, target_names=genre_names))
+    print("\n" + "="*60)
+    print("      Classification Report: Support Vector Machine (SVM)")
+    print("="*60)
+    print(classification_report(y_test, y_pred_svm, target_names=genre_names))
+    print("\n" + "="*60)
+    print("      Classification Report: Random Forest Classifier (RFC)")
+    print("="*60)
+    print(classification_report(y_test, y_pred_rf, target_names=genre_names))
+    print("\n" + "="*60)
+    print("      Classification Report: Convolutional Neural Network (CNN)")
+    print("="*60)
+    print(classification_report(y_test, y_pred_cnn, target_names=genre_names))
 
 except FileNotFoundError as e:
     print(f"\nERROR: A required file was not found: {e.filename}")
