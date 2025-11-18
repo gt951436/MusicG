@@ -3,6 +3,18 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+import tensorflow as tf 
+from tensorflow.keras.models import Sequential
+
+from tensorflow.keras.layers import (
+    Conv1D,               # The 1D convolutional layer
+    MaxPooling1D,         # The 1D max pooling layer
+    BatchNormalization,   # The layer for stabilizing learning
+    Dropout,              # The layer for preventing overfitting
+    Flatten,              # The layer to bridge conv blocks and dense layers
+    Dense                 # The classic fully-connected neural network layer
+)
+
 # ---Loading and Preparing Data---
 CSV_PATH = "features.csv"
 
