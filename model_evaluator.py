@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 print("--- Model Evaluation Script ---")
 
 try:
-    # --- 1. Load and Prepare the Test Data ---
+    # --- 1. Load and Prepare the Test Data ----------------
     print("\n[1/4] Loading and preparing test data...")
 
     df = pd.read_csv("features.csv")
@@ -21,7 +21,7 @@ try:
     print(f"X_test shape: {X_test.shape}")
     print(f"y_test shape: {y_test.shape}")
 
-    # --- 2. Load the scikit-learn Models and the Scaler ---
+    # --- 2. Load the scikit-learn Models and the Scaler -----------
     print("\n[2/4] Loading scikit-learn models and scaler...")
 
     scaler = joblib.load('scaler.joblib')
@@ -36,7 +36,7 @@ try:
     print(f"SVM Model: {type(svm_model)}")
     print(f"Random Forest Model: {type(rf_model)}")
 
-    # --- 3. Load the Keras CNN Model ---
+    # --- 3. Load the Keras CNN Model ------------------------
     print("\n[3/4] Loading Keras CNN model...")
 
     cnn_model = tf.keras.models.load_model('music_genre_cnn.h5')
@@ -46,7 +46,7 @@ try:
     
     cnn_model.summary()
 
-    # --- 4. Prepare Test Data for Different Model Types ---
+    # --- 4. Prepare Test Data for Different Model Types ------------
     print("\n[4/4] Preparing test data for model predictions...")
 
     # for scikit-learn models, only scale the data
@@ -58,6 +58,29 @@ try:
     print(f"Shape of X_test_cnn (for Keras): {X_test_cnn.shape}")
     
     print("\nAll models and data are loaded and ready for evaluation!")
+    
+    # --- 5. Generate Predictions for Each Model -----------------------
+    print("\n[5/5] Generating predictions on the test set...")
+
+    # Predictions for scikit-learn models
+    y_pred_log_reg = log_reg_model.predict(X_test_scaled)
+    y_pred_svm = svm_model.predict(X_test_scaled)
+    y_pred_rf = rf_model.predict(X_test_scaled)
+    print("Predictions generated for scikit-learn models.")
+
+    # Predictions for Keras CNN model
+    y_pred_cnn_probs = cnn_model.predict(X_test_cnn)
+    y_pred_cnn = np.argmax(y_pred_cnn_probs, axis=1)
+    print("Predictions generated for Keras CNN model.")
+
+    # --- Verification Step ---
+    print("\n--- Verifying Prediction Shapes ---")
+    print(f"LR Predictions Shape: {y_pred_log_reg.shape}")
+    print(f"SVM Predictions Shape: {y_pred_svm.shape}")
+    print(f"RFC Predictions Shape: {y_pred_rf.shape}")
+    print(f"CNN Predictions Shape: {y_pred_cnn.shape}")
+
+    print("\nAll predictions have been generated successfully!")
 
 except FileNotFoundError as e:
     print(f"\nERROR: A required file was not found: {e.filename}")
