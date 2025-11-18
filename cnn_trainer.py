@@ -75,6 +75,13 @@ model.add(BatchNormalization())
 #-----Flatten Layer-----
 model.add(Flatten())
 
+#----Dense Classification Head-----
+# Add a Dense layer
+model.add(Dense(units=64, activation='relu'))
+
+# Add a Dropout layer for regularization for overfitting prevention
+model.add(Dropout(0.3))
+
 # --- Verification Step: Model Summary ---
 model.summary()
 
