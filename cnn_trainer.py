@@ -61,8 +61,12 @@ model.add(Conv1D(
     activation='relu', 
     input_shape=(X_train_cnn.shape[1], 1) 
 ))
+
 # Adding a MaxPooling1D layer for down-sampling feature maps
 model.add(MaxPooling1D(pool_size=2))
+
+# Adding Batch Normalization layer for stabilizing and speeding up training
+model.add(BatchNormalization())
 
 # --- Verification Step: Model Summary ---
 model.summary()
