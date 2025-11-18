@@ -3,7 +3,8 @@ import numpy as np
 import joblib
 import tensorflow as tf 
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, roc_curve, auc
+from sklearn.preprocessing import LabelBinarizer
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -33,16 +34,16 @@ try:
     rf_model = joblib.load('random_forest_model.joblib')
 
     print("Scikit-learn assets loaded successfully.")
-    print(f"Scaler: {type(scaler)}")
-    print(f"Logistic Regression Model: {type(log_reg_model)}")
-    print(f"SVM Model: {type(svm_model)}")
-    print(f"Random Forest Model: {type(rf_model)}")
+    #print(f"Scaler: {type(scaler)}")
+    #print(f"Logistic Regression Model: {type(log_reg_model)}")
+    #print(f"SVM Model: {type(svm_model)}")
+    #print(f"Random Forest Model: {type(rf_model)}")
 
     # --- 3. Load the Keras CNN Model ------------------------
     print("\n[3/4] Loading Keras CNN model...")
     cnn_model = tf.keras.models.load_model('music_genre_cnn.h5')
     print("Keras CNN model loaded successfully.")
-    print(f"CNN Model: {type(cnn_model)}")
+    #print(f"CNN Model: {type(cnn_model)}")
     
     #cnn_model.summary()
 
@@ -50,110 +51,139 @@ try:
     print("\n[4/4] Preparing test data for model predictions...")
     # for scikit-learn models, only scale the data
     X_test_scaled = scaler.transform(X_test)
-    print(f"Shape of X_test_scaled (for scikit-learn): {X_test_scaled.shape}")
     # for CNN model,scale AND reshape the data to 3D
     X_test_cnn = np.expand_dims(X_test_scaled, axis=-1)
-    print(f"Shape of X_test_cnn (for Keras): {X_test_cnn.shape}")
     
-    print("\nAll models and data are loaded and ready for evaluation!")
+    print("\nAll models and data are ready for evaluation!")
     
-    # --- 5. Generate Predictions for Each Model -----------------------
+    # =====================================================
+    #    5 - GENERATE PREDICTIONS
+    # =====================================================
     print("\n[5/5] Generating predictions on the test set...")
-    # Predictions for scikit-learn models
-    y_pred_log_reg = log_reg_model.predict(X_test_scaled)
-    y_pred_svm = svm_model.predict(X_test_scaled)
-    y_pred_rf = rf_model.predict(X_test_scaled)
-    print("Predictions generated for scikit-learn models.")
-    # Predictions for Keras CNN model
-    y_pred_cnn_probs = cnn_model.predict(X_test_cnn)
-    y_pred_cnn = np.argmax(y_pred_cnn_probs, axis=1)
-    print("Predictions generated for Keras CNN model.")
+    
+    # scikit-learn probability predictions
+    proba_log_reg = log_reg_model.predict_proba(X_test_scaled)
+    proba_svm = svm_model.predict_proba(X_test_scaled)
+    proba_rf = rf_model.predict_proba(X_test_scaled)
+
+    # CNN probabilities
+    proba_cnn = cnn_model.predict(X_test_cnn)
+
+     # class predictions
+    y_pred_log_reg = np.argmax(proba_log_reg, axis=1)
+    y_pred_svm = np.argmax(proba_svm, axis=1)
+    y_pred_rf = np.argmax(proba_rf, axis=1)
+    y_pred_cnn = np.argmax(proba_cnn, axis=1)
 
     # --- Verification Step ---
-    print("\n--- Verifying Prediction Shapes ---")
-    print(f"LR Predictions Shape: {y_pred_log_reg.shape}")
-    print(f"SVM Predictions Shape: {y_pred_svm.shape}")
-    print(f"RFC Predictions Shape: {y_pred_rf.shape}")
-    print(f"CNN Predictions Shape: {y_pred_cnn.shape}")
+    #print("\n--- Verifying Prediction Shapes ---")
+    #print(f"LR Predictions Shape: {y_pred_log_reg.shape}")
+    #print(f"SVM Predictions Shape: {y_pred_svm.shape}")
+    #print(f"RFC Predictions Shape: {y_pred_rf.shape}")
+    #print(f"CNN Predictions Shape: {y_pred_cnn.shape}")
 
     print("\nAll predictions have been generated successfully!")
     
-    # --- 6. Generate Detailed Classification Reports -----------------
+   # =====================================================
+    #  6 — CLASSIFICATION REPORTS 
+    # =====================================================
     genre_names = [
         'blues', 'classical', 'country', 'disco', 'hiphop', 
         'jazz', 'metal', 'pop', 'reggae', 'rock'
     ]
 
-    print("\n" + "="*60)
-    print("      Classification Report: Logistic Regression (LR)")
-    print("="*60)
-    print(classification_report(y_test, y_pred_log_reg, target_names=genre_names))
-    print("\n" + "="*60)
-    print("      Classification Report: Support Vector Machine (SVM)")
-    print("="*60)
-    print(classification_report(y_test, y_pred_svm, target_names=genre_names))
-    print("\n" + "="*60)
-    print("      Classification Report: Random Forest Classifier (RFC)")
-    print("="*60)
-    print(classification_report(y_test, y_pred_rf, target_names=genre_names))
-    print("\n" + "="*60)
-    print("      Classification Report: Convolutional Neural Network (CNN)")
-    print("="*60)
-    print(classification_report(y_test, y_pred_cnn, target_names=genre_names))
+    print("\n======= CLASSIFICATION REPORTS =======")
+    print("\nLogistic Regression:\n", classification_report(y_test, y_pred_log_reg, target_names=genre_names))
+    print("\nSVM:\n", classification_report(y_test, y_pred_svm, target_names=genre_names))
+    print("\nRandom Forest:\n", classification_report(y_test, y_pred_rf, target_names=genre_names))
+    print("\nCNN:\n", classification_report(y_test, y_pred_cnn, target_names=genre_names))
     
-    # --- 7. Compute the Confusion Matrix for Each Model --------------------------------
-    print("\n" + "="*60)
-    print("           Computing Confusion Matrices")
-    print("="*60)
+    # =====================================================
+    #   7 — CONFUSION MATRICES
+    # =====================================================
 
     cm_log_reg = confusion_matrix(y_test, y_pred_log_reg)
     cm_svm = confusion_matrix(y_test, y_pred_svm)
     cm_rf = confusion_matrix(y_test, y_pred_rf)
     cm_cnn = confusion_matrix(y_test, y_pred_cnn)
 
-    print("\n--- Logistic Regression Confusion Matrix (raw) ---")
-    print(cm_log_reg)
-    print(f"Shape: {cm_log_reg.shape}")
-
-    print("\n--- SVM Confusion Matrix (raw) ---")
-    print(cm_svm)
-
-    print("\n--- Random Forest Confusion Matrix (raw) ---")
-    print(cm_rf)
-
-    print("\n--- CNN Confusion Matrix (raw) ---")
-    print(cm_cnn)
-
     print("\nConfusion matrices computed successfully.")
     
-    # --- 8. Visualize the Confusion Matrices as Heatmaps -------------------
+    # --- Visualize the Confusion Matrices as Heatmaps -------------------
     def plot_confusion_matrix(cm, labels, title, ax):
-        sns.heatmap(
-            cm,                
-            annot=True,          
-            fmt='d',             
-            cmap='Blues',        
-            xticklabels=labels,  
-            yticklabels=labels, 
-            ax=ax                
-        )
-        ax.set_title(title, fontsize=14)
-        ax.set_xlabel('Predicted Label')
-        ax.set_ylabel('True Label')
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                    xticklabels=labels, yticklabels=labels, ax=ax)
+        ax.set_title(title)
+        ax.set_xlabel("Predicted")
+        ax.set_ylabel("True")
 
     fig, axes = plt.subplots(2, 2, figsize=(15, 12))
-    fig.suptitle('Confusion Matrices for All Models', fontsize=20)
+    fig.suptitle("Confusion Matrices")
 
-    plot_confusion_matrix(cm_log_reg, genre_names, 'Logistic Regression', axes[0, 0])
-    plot_confusion_matrix(cm_svm, genre_names, 'Support Vector Machine', axes[0, 1])
-    plot_confusion_matrix(cm_rf, genre_names, 'Random Forest', axes[1, 0])
-    plot_confusion_matrix(cm_cnn, genre_names, 'Convolutional Neural Network', axes[1, 1])
+    plot_confusion_matrix(cm_log_reg, genre_names, "Logistic Regression", axes[0, 0])
+    plot_confusion_matrix(cm_svm, genre_names, "SVM", axes[0, 1])
+    plot_confusion_matrix(cm_rf, genre_names, "Random Forest", axes[1, 0])
+    plot_confusion_matrix(cm_cnn, genre_names, "CNN", axes[1, 1])
 
-    plt.tight_layout(rect=[0, 0, 1, 0.96]) 
+    plt.tight_layout(rect=[0, 0, 1, 0.96])
     plt.show()
+    
+    # =====================================================
+    #  8 — MULTI-CLASS ROC CURVES
+    # =====================================================
+    
+    print("\n======= ROC CURVES =======")
+    
+    # one-hot encode test labels
+    lb = LabelBinarizer()
+    y_test_bin = lb.fit_transform(y_test)
+    
+    def plot_multiclass_roc(y_true, y_proba, model_name, class_names):
+        n_classes = len(class_names)
+        fpr = {}
+        tpr = {}
+        roc_auc = {}
+
+        # per-class ROC
+        for i in range(n_classes):
+            fpr[i], tpr[i], _ = roc_curve(y_true[:, i], y_proba[:, i])
+            roc_auc[i] = auc(fpr[i], tpr[i])
+
+        # micro-average ROC
+        fpr["micro"], tpr["micro"], _ = roc_curve(y_true.ravel(), y_proba.ravel())
+        roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+
+        plt.figure(figsize=(10, 8))
+
+        # micro-average
+        plt.plot(
+            fpr["micro"], tpr["micro"],
+            label=f"Micro-average ROC (AUC = {roc_auc['micro']:.2f})",
+            linewidth=2
+        )
+
+        # each class curve
+        for i in range(n_classes):
+            plt.plot(
+                fpr[i], tpr[i],
+                lw=2,
+                label=f"{class_names[i]} (AUC = {roc_auc[i]:.2f})"
+            )
+
+        plt.plot([0, 1], [0, 1], "k--")
+        plt.xlabel("False Positive Rate")
+        plt.ylabel("True Positive Rate")
+        plt.title(f"ROC Curve — {model_name}")
+        plt.legend(loc="lower right")
+        plt.show()
+        
+    # ---- PLOT ROC FOR EACH MODEL ----
+    plot_multiclass_roc(y_test_bin, proba_log_reg, "Logistic Regression", genre_names)
+    plot_multiclass_roc(y_test_bin, proba_svm, "SVM", genre_names)
+    plot_multiclass_roc(y_test_bin, proba_rf, "Random Forest", genre_names)
+    plot_multiclass_roc(y_test_bin, proba_cnn, "CNN", genre_names)
 
 except FileNotFoundError as e:
-    print(f"\nERROR: A required file was not found: {e.filename}")
-    print("Please ensure all model files ('scaler.joblib', '*.joblib', 'music_genre_cnn.h5') and 'features.csv' are in the correct directory.")
+    print(f"\nERROR: Missing file: {e.filename}")
 except Exception as e:
-    print(f"An unexpected error occurred: {e}")
+    print(f"Unexpected Error: {e}")
