@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 import tensorflow as tf 
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 
 print("--- Model Evaluation Script ---")
 
@@ -98,6 +98,31 @@ try:
     print("      Classification Report: Convolutional Neural Network (CNN)")
     print("="*60)
     print(classification_report(y_test, y_pred_cnn, target_names=genre_names))
+    
+    # --- 7. Compute the Confusion Matrix for Each Model --------------------------------
+    print("\n" + "="*60)
+    print("           Computing Confusion Matrices")
+    print("="*60)
+
+    cm_log_reg = confusion_matrix(y_test, y_pred_log_reg)
+    cm_svm = confusion_matrix(y_test, y_pred_svm)
+    cm_rf = confusion_matrix(y_test, y_pred_rf)
+    cm_cnn = confusion_matrix(y_test, y_pred_cnn)
+
+    print("\n--- Logistic Regression Confusion Matrix (raw) ---")
+    print(cm_log_reg)
+    print(f"Shape: {cm_log_reg.shape}")
+
+    print("\n--- SVM Confusion Matrix (raw) ---")
+    print(cm_svm)
+
+    print("\n--- Random Forest Confusion Matrix (raw) ---")
+    print(cm_rf)
+
+    print("\n--- CNN Confusion Matrix (raw) ---")
+    print(cm_cnn)
+
+    print("\nConfusion matrices computed successfully.")
 
 except FileNotFoundError as e:
     print(f"\nERROR: A required file was not found: {e.filename}")
