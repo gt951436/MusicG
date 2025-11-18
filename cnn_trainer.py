@@ -85,6 +85,16 @@ model.add(Dropout(0.3))
 #----Output Layer-----
 model.add(Dense(units=10, activation='softmax'))
 
+#----Model Compilation-----
+print("\n--- Compiling the CNN Model ---")
+
+model.compile(
+    optimizer='adam', 
+    loss='sparse_categorical_crossentropy', 
+    metrics=['accuracy']
+)
+print("Model compiled successfully. It's ready to be trained.")
+
 # --- Verification Step: Model Summary ---
 model.summary()
 
