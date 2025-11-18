@@ -4,6 +4,8 @@ import joblib
 import tensorflow as tf 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 print("--- Model Evaluation Script ---")
 
@@ -123,6 +125,32 @@ try:
     print(cm_cnn)
 
     print("\nConfusion matrices computed successfully.")
+    
+    # --- 8. Visualize the Confusion Matrices as Heatmaps -------------------
+    def plot_confusion_matrix(cm, labels, title, ax):
+        sns.heatmap(
+            cm,                
+            annot=True,          
+            fmt='d',             
+            cmap='Blues',        
+            xticklabels=labels,  
+            yticklabels=labels, 
+            ax=ax                
+        )
+        ax.set_title(title, fontsize=14)
+        ax.set_xlabel('Predicted Label')
+        ax.set_ylabel('True Label')
+
+    fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+    fig.suptitle('Confusion Matrices for All Models', fontsize=20)
+
+    plot_confusion_matrix(cm_log_reg, genre_names, 'Logistic Regression', axes[0, 0])
+    plot_confusion_matrix(cm_svm, genre_names, 'Support Vector Machine', axes[0, 1])
+    plot_confusion_matrix(cm_rf, genre_names, 'Random Forest', axes[1, 0])
+    plot_confusion_matrix(cm_cnn, genre_names, 'Convolutional Neural Network', axes[1, 1])
+
+    plt.tight_layout(rect=[0, 0, 1, 0.96]) 
+    plt.show()
 
 except FileNotFoundError as e:
     print(f"\nERROR: A required file was not found: {e.filename}")
