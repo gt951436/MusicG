@@ -1,6 +1,6 @@
 import os
 
-DATASET_PATH = "genres_original"
+DATASET_PATH = "archive/Data/genres_original"
 
 if not os.path.exists(DATASET_PATH):
     print(f"Error: Dataset path '{DATASET_PATH}' not found.")
