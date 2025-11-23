@@ -4,7 +4,7 @@ import pandas as pd
 
 import soundfile as sf
 
-DATASET_PATH = "genres_original"
+DATASET_PATH = "archive/Data/genres_original"
 
 CSV_PATH = "features.csv"
 
